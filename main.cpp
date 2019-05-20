@@ -1,30 +1,31 @@
+#include "parse.h"
 #include <iostream>
-#include <ctype.h>
 #include <stdio.h>
-#include <cstring>
-const int keywordSum = 8;
 const char * keyword[] = { "if","else","for","while","do","int","read","write" };
-char singleword[50] = "+-*(){};,:";
-char doubleword[10] = "><=!";
+const char *singleword = "+-*(){};,:";
+const char *doubleword = "><=!";
 const int MAX_TEXT_LEN = 300;
-char Scanin[MAX_TEXT_LEN], Scanout[MAX_TEXT_LEN];
-FILE * fin, *fout;
+const int keywordSum = 8;
+char token[20], token1[40];
+char Scanin[300], Scanout[300];
+FILE *fin, *fout,*fp;
 #define DEBUG_LINUX
 int TESTscan()
 {
     int lines = 1;
-    char ch, token[40];
+    char ch;
     int es = 0, j, n;
+
 #ifdef DEBUG_WINDOWS
-#define DEBUG
+    #define DEBUG
     strcpy(Scanin, "C:\\Coding\\CompilationPrinciple\\in.txt");
     strcpy(Scanout, "C:\\Coding\\CompilationPrinciple\\out.txt");
 #endif
 
 #ifdef DEBUG_LINUX
-#define DEBUG
-    strcpy(Scanin, "/home/wz/桌面/projects/CompilationPrinciple/_clion_/in.txt");
-    strcpy(Scanout, "./out.txt");
+    #define DEBUG
+    strcpy(Scanin, "/home/wz/文档/projects/CompilationPrinciple/_clion_/inout/in.txt");
+    strcpy(Scanout, "/home/wz/文档/projects/CompilationPrinciple/_clion_/inout/out.txt");
 #endif
 #ifndef DEBUG
     printf("请输入源程序文件名（包括路径）：");
@@ -35,7 +36,6 @@ int TESTscan()
 
     if ((fin = fopen(Scanin, "r")) == NULL)
     {
-        //printf("fopen return NULL, error=%d/n", GetLastError());
         printf("\n打开此法分析输入文件出错\n");
         return 1;
     }
@@ -150,6 +150,15 @@ int TESTscan()
 using namespace std;
 int main()
 {
-    TESTscan();
+    int es = 0;
+    es = TESTscan();
+    if (es > 0) printf("语法分析有错，编译停止！");
+    else printf("语法分析成功！\n");
+    if (es == 0)
+    {
+        es = TESTparse();
+        if (es == 0) printf("语法分析成功！\n");
+        else printf("语法分析错误！\n");
+    }
     return 0;
 }
